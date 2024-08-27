@@ -1,0 +1,35 @@
+<Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam 1" serialNumber="1B1030BF"/>
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="wormMotor" port="0"/>
+            <goBILDA5202SeriesMotor name="backRightDriveMotor" port="1"/>
+            <goBILDA5202SeriesMotor name="frontRightDriveMotor" port="2"/>
+            <goBILDA5202SeriesMotor name="intakeMotor" port="3"/>
+            <Servo name="rightOuttakeServo" port="0"/>
+            <Servo name="rightMosaicFixerServo" port="3"/>
+            <Servo name="purplePixelPlacerServo" port="4"/>
+            <DigitalDevice name="backBeamBreak" port="1"/>
+            <DigitalDevice name="rightLEDRedChannel" port="4"/>
+            <DigitalDevice name="rightLEDGreenChannel" port="5"/>
+            <DigitalDevice name="frontBeamBreak" port="7"/>
+            <SparkFunOTOS name="odometry" port="0" bus="2"/>
+        </LynxModule>
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5202SeriesMotor name="frontLeftDriveMotor" port="0"/>
+            <goBILDA5202SeriesMotor name="backLeftDriveMotor" port="1"/>
+            <goBILDA5202SeriesMotor name="elevatorMotor" port="3"/>
+            <Servo name="hangerServo" port="0"/>
+            <Servo name="launcherServo" port="1"/>
+            <Servo name="leftMosaicFixerServo" port="4"/>
+            <Servo name="leftOuttakeServo" port="5"/>
+            <AnalogInput name="wormPotentiometer " port="0"/>
+            <RevTouchSensor name="wormLimitSwitch" port="1"/>
+            <RevTouchSensor name="elevatorLimitSwitch" port="3"/>
+            <DigitalDevice name="leftLEDRedChannel" port="4"/>
+            <DigitalDevice name="leftLEDGreenChannel" port="5"/>
+            <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
+        </LynxModule>
+    </LynxUsbDevice>
+    <Webcam name="Webcam 2" serialNumber="F2ED01EF"/>
+</Robot>
