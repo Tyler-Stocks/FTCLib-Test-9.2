@@ -25,12 +25,23 @@ import org.firstinspires.ftc.teamcode.subsystems.purplepixelplacer.PurplePixelPl
 public abstract class OpModeTemplate extends CommandOpMode {
 	protected enum GamePeriod {
 		TELEOP,
-		ENDGAME
+		ENDGAME;
+
+		public GamePeriod opposite() {
+			switch (this) {
+				case TELEOP:
+					return ENDGAME;
+				case ENDGAME:
+					return TELEOP;
+				default:
+					throw new RuntimeException("Enum Is Somehow Not One Of Its Variants?");
+			}
+		}
 	}
 
 	private LynxModule[] lynxModules;
 
-	protected GamePeriod gamePeriod = GamePeriod.TELEOP;
+	private GamePeriod gamePeriod = GamePeriod.TELEOP;
 
 	protected DriveSubsystem driveSubsystem;
 	protected HangerSubsystem hangerSubsystem;
@@ -48,17 +59,13 @@ public abstract class OpModeTemplate extends CommandOpMode {
 	/**
 	 * Configures all of the button bindings for the opmode
 	 */
-    protected void configureBindings() {
-
-    }
+    protected void configureBindings() {}
 
 	/**
 	 * Configures all of the triggers that are completely independent of button presses. Some
 	 * triggers that are coupled with bindings are declared in configureBindings().
 	 */
-	protected void configureTriggers() {
-
-	}
+	protected void configureTriggers() {}
 
 	/**
 	 * <p>Initializes the hardware in the following order:</p>
@@ -114,20 +121,6 @@ public abstract class OpModeTemplate extends CommandOpMode {
 	}
 
 	/**
-	 * @return Whether gamePeriod == GamePeriod.ENDGAME
-	 */
-	protected final boolean isEndgame() {
-		return gamePeriod == GamePeriod.ENDGAME;
-	}
-
-	/**
-	 * @return Whether gamePeriod = GamePeriod.TELEOP
-	 */
-	protected final boolean isTeleOp() {
-		return gamePeriod == GamePeriod.TELEOP;
-	}
-
-	/**
 	 * Forces the telemetry to stop running in the background by setting the transmission interval
 	 * to {@link Integer#MAX_VALUE}.
 	 */
@@ -169,6 +162,10 @@ public abstract class OpModeTemplate extends CommandOpMode {
 		telemetry.addData("Current Period", gamePeriod);
 	}
 
+	protected final GamePeriod gamePeriod() {
+		return this.gamePeriod;
+	}
+
 	protected final static class ToggleOpModeCommand extends CommandBase {
 		private final OpModeTemplate opMode;
 
@@ -177,14 +174,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 		}
 
 		@Override public void execute() {
-			switch (opMode.gamePeriod) {
-				case TELEOP:
-					opMode.gamePeriod = GamePeriod.ENDGAME;
-					break;
-				case ENDGAME:
-					opMode.gamePeriod = GamePeriod.TELEOP;
-					break;
-			}
+			opMode.gamePeriod = opMode.gamePeriod.opposite();
 		}
 
 		@Override public boolean isFinished() {
@@ -200,7 +190,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 		}
 
 		@Override public boolean get() {
-			return this.opMode.isEndgame();
+			return this.opMode.gamePeriod == GamePeriod.ENDGAME;
 		}
 	}
 
@@ -212,7 +202,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 		}
 
 		@Override public boolean get() {
-			return this.opMode.isTeleOp();
+			return this.opMode.gamePeriod == GamePeriod.TELEOP;
 		}
 	}
 
