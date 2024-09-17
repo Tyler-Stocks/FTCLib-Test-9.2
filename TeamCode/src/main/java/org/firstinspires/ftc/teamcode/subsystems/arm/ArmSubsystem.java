@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.constants.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.arm.core.ArmHomingState;
 import org.firstinspires.ftc.teamcode.subsystems.arm.core.ArmState;
 import org.firstinspires.ftc.teamcode.subsystems.utility.MotorUtility;
+import org.firstinspires.ftc.teamcode.subsystems.utility.RobotSide;
 
 /**
  * <h1>ArmSubsystem</h1>
@@ -69,7 +70,7 @@ public final class ArmSubsystem extends SubsystemBase {
 
         HardwareMap hardwareMap = opMode.hardwareMap;
 
-        outtake = new Outtake(hardwareMap);
+        outtake = new Outtake(opMode);
 
         wormLimitSwitch     = hardwareMap.get(RevTouchSensor.class, WORM_LIMIT_SWITCH_NAME);
         elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, ELEVATOR_LIMIT_SWITCH_NAME);
@@ -156,6 +157,20 @@ public final class ArmSubsystem extends SubsystemBase {
         } else {
             outtake.setLeftOuttakeDoorPosition(leftOuttakeDoorPosition);
             outtake.setRightOuttakeDoorPosition(rightOuttakeDoorPosition);
+        }
+    }
+
+    public void setOuttakePosition(@NonNull RobotSide side, double position) {
+        switch (side) {
+            case LEFT:
+                leftOuttakeDoorPosition = position;
+                break;
+            case RIGHT:
+                rightOuttakeDoorPosition = position;
+                break;
+            case BOTH:
+                leftOuttakeDoorPosition = position;
+                rightOuttakeDoorPosition = position;
         }
     }
 

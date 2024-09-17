@@ -128,8 +128,8 @@ public final class Constants {
         public static String LEFT_OUTTAKE_SERVO_NAME  = "leftOuttakeServo";
         public static String RIGHT_OUTTAKE_SERVO_NAME = "rightOuttakeServo";
 
-        public static double OUTTAKE_DOOR_OPEN_POSITION   = 0.25;
-        public static double OUTTAKE_DOOR_CLOSED_POSITION = 0.0;
+        public static double OPEN_POSITION = 0.25;
+        public static double CLOSED_POSITION = 0.0;
     }
 
     public static class DrivebaseConstants {

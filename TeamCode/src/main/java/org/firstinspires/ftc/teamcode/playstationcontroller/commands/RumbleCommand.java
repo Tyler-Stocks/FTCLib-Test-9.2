@@ -4,33 +4,36 @@ import androidx.annotation.NonNull;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class RumbleCommand extends CommandBase {
-	private final GamepadEx gamepad;
+	private final Gamepad[] gamepads;
 
 	private final int durationMS;
 	private final double intensity;
 
-	public RumbleCommand(@NonNull GamepadEx gamepad) {
-		this.gamepad    = gamepad;
+	public RumbleCommand(@NonNull Gamepad ... gamepads) {
+		this.gamepads = gamepads;
 		this.durationMS = 1000;
 		this.intensity  = 1;
 	}
 
-	public RumbleCommand(@NonNull GamepadEx gamepad, int durationMS) {
-		this.gamepad    = gamepad;
+	public RumbleCommand(int durationMS, @NonNull Gamepad ... gamepads) {
+		this.gamepads = gamepads;
 		this.durationMS = durationMS;
 		this.intensity  = 1;
 	}
 
-	public RumbleCommand(@NonNull GamepadEx gamepad, int durationMS, double intensity) {
-		this.gamepad    = gamepad;
+	public RumbleCommand(int durationMS, double intensity, @NonNull Gamepad ... gamepads) {
+		this.gamepads   = gamepads ;
 		this.durationMS = durationMS;
 		this.intensity  = intensity;
 	}
 
 	@Override public void execute() {
-		gamepad.gamepad.rumble(intensity, intensity, durationMS);
+		for (Gamepad gamepad : gamepads) {
+			gamepad.rumble(intensity, intensity, durationMS);
+		}
 	}
 
 	@Override public boolean isFinished() {

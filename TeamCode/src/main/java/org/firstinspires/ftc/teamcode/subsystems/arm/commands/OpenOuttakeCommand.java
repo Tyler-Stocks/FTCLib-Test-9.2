@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.utility.RobotSide;
 
-public class SetOuttakePositionCommand extends CommandBase {
+public class OpenOuttakeCommand extends CommandBase {
 	private final ArmSubsystem armSubsystem;
 	private final RobotSide outtakeSide;
 	private final double position;
@@ -19,7 +19,7 @@ public class SetOuttakePositionCommand extends CommandBase {
 	 * @param outtakeSide Which outtake door to open (Left, Right, or Both)
 	 * @param position The position to move the specified outtake door(s) to
 	 */
-	public SetOuttakePositionCommand(
+	public OpenOuttakeCommand(
 			@NonNull ArmSubsystem armSubsystem,
 			@NonNull RobotSide outtakeSide,
 			double position) {
@@ -29,20 +29,10 @@ public class SetOuttakePositionCommand extends CommandBase {
 	}
 
 	@Override public void execute() {
-		switch (outtakeSide) {
-			case LEFT:
-				armSubsystem.outtake.setLeftOuttakeDoorPosition(position);
-				break;
-			case RIGHT:
-				armSubsystem.outtake.setRightOuttakeDoorPosition(position);
-				break;
-			case BOTH:
-				armSubsystem.outtake.setOuttakePosition(position);
-				break;
-		}
+		armSubsystem.setOuttakePosition(outtakeSide, position);
 	}
 
-	@Override public boolean isFinished() {
+	@Override public boolean isFinished()	 {
 		return true;
 	}
 }

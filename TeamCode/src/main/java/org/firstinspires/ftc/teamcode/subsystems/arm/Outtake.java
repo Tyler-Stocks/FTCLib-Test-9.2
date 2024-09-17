@@ -4,17 +4,23 @@ import static org.firstinspires.ftc.teamcode.constants.Constants.ArmConstants.*;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public final class Outtake {
 	private final ServoImplEx leftDoorServo, rightDoorServo;
 
+	private Telemetry telemetry;
+
 	public double leftOuttakeDoorPosition, rightOuttakeDoorPosition;
 
-	public Outtake(@NonNull HardwareMap hardwareMap) {
-		this.leftDoorServo  = hardwareMap.get(ServoImplEx.class, LEFT_OUTTAKE_SERVO_NAME);
-		this.rightDoorServo = hardwareMap.get(ServoImplEx.class, RIGHT_OUTTAKE_SERVO_NAME);
+	public Outtake(@NonNull OpMode opMode) {
+		telemetry = opMode.telemetry;
+
+		this.leftDoorServo  = opMode.hardwareMap.get(ServoImplEx.class, LEFT_OUTTAKE_SERVO_NAME);
+		this.rightDoorServo = opMode.hardwareMap.get(ServoImplEx.class, RIGHT_OUTTAKE_SERVO_NAME);
 
 		leftOuttakeDoorPosition  = 0.0;
 		rightOuttakeDoorPosition = 0.0;
@@ -24,28 +30,28 @@ public final class Outtake {
 	 * Sets the left outtake door to the open position
 	 */
 	public void openLeftOuttakeDoor() {
-		setLeftOuttakeDoorPosition(OUTTAKE_DOOR_OPEN_POSITION);
+		setLeftOuttakeDoorPosition(OPEN_POSITION);
 	}
 
 	/**
 	 * Sets the right outtake door to the open position
 	 */
 	public void openRightOuttakeDoor() {
-		setRightOuttakeDoorPosition(OUTTAKE_DOOR_OPEN_POSITION);
+		setRightOuttakeDoorPosition(OPEN_POSITION);
 	}
 
 	/**
 	 * Sets the left outtake door to the closed position
 	 */
 	public void closeLeftOuttakeDoor() {
-		setLeftOuttakeDoorPosition(OUTTAKE_DOOR_CLOSED_POSITION);
+		setLeftOuttakeDoorPosition(CLOSED_POSITION);
 	}
 
 	/**
 	 * Sets the right outtake door to the closed position
 	 */
 	public void closeRightOuttakeDoor() {
-		setRightOuttakeDoorPosition(OUTTAKE_DOOR_CLOSED_POSITION);
+		setRightOuttakeDoorPosition(CLOSED_POSITION);
 	}
 
 	/**

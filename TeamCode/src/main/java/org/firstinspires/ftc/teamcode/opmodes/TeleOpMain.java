@@ -22,7 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.triggers.*;
 import org.firstinspires.ftc.teamcode.subsystems.launcher.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.mosaicfixers.commands.*;
 
-@TeleOp(name = "TeleOp - Use This One", group = "Production")
+// The group is set to "a" so it always goes to the top of the list
+@TeleOp(name = "Use This One", group = "a")
 public final class TeleOpMain extends OpModeTemplate {
 
     @Override public void initialize() {
@@ -50,16 +51,13 @@ public final class TeleOpMain extends OpModeTemplate {
         // -----------------------------------------------------------------------------------------
 
         new GamepadButton(operatorGamepad, SHARE)
-                .whenPressed(new InstantCommand(this::toggleGamePeriod))
-                .whenPressed(new RumbleCommand(driverGamepad))
-                .whenPressed(new RumbleCommand(operatorGamepad));
+                .whenPressed(new ToggleOpModeCommand(this))
+                .whenPressed(new RumbleCommand(gamepad1, gamepad2));
 
-        new GamepadButton(operatorGamepad, LEFT_BUMPER)
-                .and(new Trigger(super::isEndgame))
+        new GamepadButton(operatorGamepad, LEFT_BUMPER).and(new EndgameTrigger(this))
                 .whenActive(new ReleaseLauncherCommand(launcherSubsystem));
 
-        new GamepadButton(operatorGamepad, RIGHT_BUMPER)
-                .and(new Trigger(super::isEndgame))
+        new GamepadButton(operatorGamepad, RIGHT_BUMPER).and(new EndgameTrigger(this))
                 .whenActive(new ReleaseHangerCommand(hangerSubsystem));
 
         // -----------------------------------------------------------------------------------------
@@ -67,33 +65,32 @@ public final class TeleOpMain extends OpModeTemplate {
         // -----------------------------------------------------------------------------------------
 
         new GamepadButton(operatorGamepad, LEFT_BUMPER)
-                .whenInactive(new SetOuttakePositionCommand(
-                        armSubsystem, LEFT, OUTTAKE_DOOR_CLOSED_POSITION))
-                .and(new Trigger(super::isTeleOp))
-                .and(new ElevatorIsOutsideFrameTrigger(armSubsystem))
-                .whenActive(new SetOuttakePositionCommand(
-                        armSubsystem, LEFT, OUTTAKE_DOOR_OPEN_POSITION));
+                .toggleWhenActive(
+                        new OpenOuttakeCommand(armSubsystem, LEFT, OPEN_POSITION),
+                        new OpenOuttakeCommand(armSubsystem, LEFT, CLOSED_POSITION)
+                );
 
         new GamepadButton(operatorGamepad, RIGHT_BUMPER)
-                .whenInactive(new SetOuttakePositionCommand(
-                        armSubsystem, RIGHT, OUTTAKE_DOOR_CLOSED_POSITION))
-                .and(new Trigger(super::isTeleOp))
-                .and(new ElevatorIsOutsideFrameTrigger(armSubsystem))
-                .whenActive(new SetOuttakePositionCommand(
-                        armSubsystem, RIGHT, OUTTAKE_DOOR_OPEN_POSITION
-                ));
+                .toggleWhenActive(
+                        new OpenOuttakeCommand(armSubsystem, RIGHT, OPEN_POSITION),
+                        new OpenOuttakeCommand(armSubsystem, LEFT, CLOSED_POSITION)
+                );
 
         // -----------------------------------------------------------------------------------------
         // Intake Triggers
         // -----------------------------------------------------------------------------------------
 
         new LeftGamepadTrigger(INTAKE_TRIGGER_THRESHOLD, operatorGamepad)
-                .whenPressed(new IntakeCommand(intakeSubsystem))
-                .whenReleased(new StopIntakeCommand(intakeSubsystem));
+                .toggleWhenPressed(
+                        new IntakeCommand(intakeSubsystem),
+                        new StopIntakeCommand(intakeSubsystem)
+                );
 
         new RightGamepadTrigger(OUTTAKE_TRIGGER_THRESHOLD, operatorGamepad)
-                .whenPressed(new OuttakeCommand(intakeSubsystem))
-                .whenReleased(new StopIntakeCommand(intakeSubsystem));
+                .toggleWhenPressed(
+                        new IntakeCommand(intakeSubsystem),
+                        new StopIntakeCommand(intakeSubsystem)
+                );
 
         // -----------------------------------------------------------------------------------------
         // Arm Bindings
@@ -127,8 +124,10 @@ public final class TeleOpMain extends OpModeTemplate {
         // -----------------------------------------------------------------------------------------
 
         new GamepadButton(driverGamepad, LEFT_BUMPER)
-                .whenPressed(new DisableMosaicFixerCommand(mosaicFixerSubsystem, LEFT))
-                .whenReleased(new EnableMosaicFixerCommand(mosaicFixerSubsystem, LEFT));
+                .toggleWhenPressed(
+                        new DisableMosaicFixerCommand(mosaicFixerSubsystem, LEFT),
+                        new EnableMosaicFixerCommand(mosaicFixerSubsystem, RIGHT)
+                );
 
         new GamepadButton(driverGamepad, DPAD_DOWN)
                 .whenPressed(new MoveMosaicFixerCommand(mosaicFixerSubsystem, RETRACTED, LEFT));
@@ -143,8 +142,10 @@ public final class TeleOpMain extends OpModeTemplate {
                 .whenPressed(new MoveMosaicFixerCommand(mosaicFixerSubsystem, HIGH, LEFT));
 
         new GamepadButton(driverGamepad, RIGHT_BUMPER)
-                .whenPressed(new DisableMosaicFixerCommand(mosaicFixerSubsystem, RIGHT))
-                .whenReleased(new EnableMosaicFixerCommand(mosaicFixerSubsystem, RIGHT));
+                .toggleWhenPressed(
+                        new DisableMosaicFixerCommand(mosaicFixerSubsystem, RIGHT),
+                        new EnableMosaicFixerCommand(mosaicFixerSubsystem, RIGHT)
+                );
 
         new GamepadButton(driverGamepad, CROSS)
                 .whenPressed(new MoveMosaicFixerCommand(mosaicFixerSubsystem, RETRACTED, RIGHT));
@@ -157,16 +158,19 @@ public final class TeleOpMain extends OpModeTemplate {
     }
 
     @Override protected void configureTriggers() {
-        // We don't need to worry about the outtake activating if the intake runs when the arm is
+        // Safety:
+        // We don't need to worry about the outtake activating if the runs when the arm is
         // not at home because we disable the intake when the arm is not at home.
         new IntakeIsActiveTrigger(intakeSubsystem)
-                .whenActive(new SetOuttakePositionCommand(
-                        armSubsystem, BOTH, OUTTAKE_DOOR_OPEN_POSITION))
-                .whenInactive(new SetOuttakePositionCommand(
-                        armSubsystem, BOTH, OUTTAKE_DOOR_CLOSED_POSITION));
+                .toggleWhenActive(
+                        new OpenOuttakeCommand(armSubsystem, BOTH, OPEN_POSITION),
+                        new OpenOuttakeCommand(armSubsystem, BOTH, CLOSED_POSITION)
+                );
 
         new ArmIsAtHomeTrigger(armSubsystem)
-                .whenActive(new InstantCommand(intakeSubsystem::enableIntaking))
-                .whenInactive(new InstantCommand(intakeSubsystem::disableIntaking));
+                .toggleWhenActive(
+                        new InstantCommand(intakeSubsystem::enableIntaking),
+                        new InstantCommand(intakeSubsystem::disableIntaking)
+                );
     }
 }

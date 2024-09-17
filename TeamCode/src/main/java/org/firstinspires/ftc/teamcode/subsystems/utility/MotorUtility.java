@@ -12,7 +12,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 import androidx.annotation.NonNull;
 
-public class MotorUtility {
+public final  class MotorUtility {
 
     /**
      * Sets the zero power behavior of the supplied motors

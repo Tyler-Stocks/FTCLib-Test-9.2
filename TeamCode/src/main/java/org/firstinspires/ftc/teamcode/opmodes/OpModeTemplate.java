@@ -6,8 +6,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit.VO
 import androidx.annotation.NonNull;
 
 import com.arcrobotics.ftclib.command.*;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.arm.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveSubsystem;
@@ -175,6 +177,53 @@ public abstract class OpModeTemplate extends CommandOpMode {
 
 	protected final void debug() {
 		telemetry.addData("Current Period", gamePeriod);
+	}
+
+	protected final static class ToggleOpModeCommand extends CommandBase {
+		private final OpModeTemplate opMode;
+
+		public ToggleOpModeCommand(@NonNull OpModeTemplate opMode) {
+			this.opMode = opMode;
+		}
+
+		@Override public void execute() {
+			switch (opMode.gamePeriod) {
+				case TELEOP:
+					opMode.gamePeriod = GamePeriod.ENDGAME;
+					break;
+				case ENDGAME:
+					opMode.gamePeriod = GamePeriod.TELEOP;
+					break;
+			}
+		}
+
+		@Override public boolean isFinished() {
+			return true;
+		}
+	}
+
+	protected final static class EndgameTrigger extends Trigger {
+		private final OpModeTemplate opMode;
+
+		public EndgameTrigger(@NonNull OpModeTemplate opMode) {
+			this.opMode = opMode;
+		}
+
+		@Override public boolean get() {
+			return this.opMode.isEndgame();
+		}
+	}
+
+	protected final static class TeleOpTrigger extends Trigger {
+		private final OpModeTemplate opMode;
+
+		public TeleOpTrigger(@NonNull OpModeTemplate opMode) {
+			this.opMode = opMode;
+		}
+
+		@Override public boolean get() {
+			return this.opMode.isTeleOp();
+		}
 	}
 
 	private static class BatteryVoltageError extends Error {
