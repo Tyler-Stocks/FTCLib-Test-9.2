@@ -25,6 +25,8 @@ public class SetArmTargetPositionCommand extends CommandBase {
        this.armSubsystem           = armSubsystem;
        this.wormTargetPosition     = wormTargetPosition;
        this.elevatorTargetPosition = elevatorTargetPosition;
+
+       addRequirements(armSubsystem);
     }
 
     @Override public void execute() {

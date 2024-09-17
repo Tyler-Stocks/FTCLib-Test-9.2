@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.intake.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.intake.triggers.*;
 import org.firstinspires.ftc.teamcode.subsystems.launcher.commands.*;
 import org.firstinspires.ftc.teamcode.subsystems.mosaicfixers.commands.*;
+import org.firstinspires.ftc.teamcode.subsystems.outtake.commands.OpenOuttakeCommand;
 
 // The group is set to "a" so it always goes to the top of the list
 @TeleOp(name = "Use This One", group = "a")
@@ -65,16 +66,14 @@ public final class TeleOpMain extends OpModeTemplate {
         // -----------------------------------------------------------------------------------------
 
         new GamepadButton(operatorGamepad, LEFT_BUMPER)
-                .toggleWhenActive(
-                        new OpenOuttakeCommand(armSubsystem, LEFT, OPEN_POSITION),
-                        new OpenOuttakeCommand(armSubsystem, LEFT, CLOSED_POSITION)
-                );
+                .whenInactive(new OpenOuttakeCommand(outtakeSubsystem, LEFT, CLOSED_POSITION))
+                .and(new ElevatorIsOutsideFrameTrigger(armSubsystem))
+                .whenActive(new OpenOuttakeCommand(outtakeSubsystem, LEFT, OPEN_POSITION));
 
         new GamepadButton(operatorGamepad, RIGHT_BUMPER)
-                .toggleWhenActive(
-                        new OpenOuttakeCommand(armSubsystem, RIGHT, OPEN_POSITION),
-                        new OpenOuttakeCommand(armSubsystem, LEFT, CLOSED_POSITION)
-                );
+                .whenInactive(new OpenOuttakeCommand(outtakeSubsystem, RIGHT, CLOSED_POSITION))
+                .and(new ElevatorIsOutsideFrameTrigger(armSubsystem))
+                .whenActive(new OpenOuttakeCommand(outtakeSubsystem, RIGHT, OPEN_POSITION));
 
         // -----------------------------------------------------------------------------------------
         // Intake Triggers
@@ -163,8 +162,8 @@ public final class TeleOpMain extends OpModeTemplate {
         // not at home because we disable the intake when the arm is not at home.
         new IntakeIsActiveTrigger(intakeSubsystem)
                 .toggleWhenActive(
-                        new OpenOuttakeCommand(armSubsystem, BOTH, OPEN_POSITION),
-                        new OpenOuttakeCommand(armSubsystem, BOTH, CLOSED_POSITION)
+                        new OpenOuttakeCommand(outtakeSubsystem, BOTH, OPEN_POSITION),
+                        new OpenOuttakeCommand(outtakeSubsystem, BOTH, CLOSED_POSITION)
                 );
 
         new ArmIsAtHomeTrigger(armSubsystem)

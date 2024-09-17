@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.*;
 
@@ -23,7 +22,6 @@ import org.firstinspires.ftc.teamcode.constants.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.arm.core.ArmHomingState;
 import org.firstinspires.ftc.teamcode.subsystems.arm.core.ArmState;
 import org.firstinspires.ftc.teamcode.subsystems.utility.MotorUtility;
-import org.firstinspires.ftc.teamcode.subsystems.utility.RobotSide;
 
 /**
  * <h1>ArmSubsystem</h1>
@@ -42,8 +40,6 @@ public final class ArmSubsystem extends SubsystemBase {
     private ArmHomingState armHomingState;
     private ArmState armState;
 
-    public final Outtake outtake;
-
     private final DcMotorImplEx wormMotor, elevatorMotor;
 
 	private final RevTouchSensor wormLimitSwitch, elevatorLimitSwitch;
@@ -54,8 +50,6 @@ public final class ArmSubsystem extends SubsystemBase {
 
     private int wormTargetPosition, elevatorTargetPosition;
     private int wormPosition, elevatorPosition;
-
-    private double leftOuttakeDoorPosition, rightOuttakeDoorPosition;
 
     private boolean disabled;
 
@@ -69,8 +63,6 @@ public final class ArmSubsystem extends SubsystemBase {
         telemetry = opMode.telemetry;
 
         HardwareMap hardwareMap = opMode.hardwareMap;
-
-        outtake = new Outtake(opMode);
 
         wormLimitSwitch     = hardwareMap.get(RevTouchSensor.class, WORM_LIMIT_SWITCH_NAME);
         elevatorLimitSwitch = hardwareMap.get(RevTouchSensor.class, ELEVATOR_LIMIT_SWITCH_NAME);
@@ -97,9 +89,6 @@ public final class ArmSubsystem extends SubsystemBase {
 
         elevatorPosition = 0;
         wormPosition     = 0;
-
-        leftOuttakeDoorPosition  = 0.0;
-        rightOuttakeDoorPosition = 0.0;
 
         armState       = ArmState.UNKNOWN;
         armHomingState = START;
@@ -146,31 +135,6 @@ public final class ArmSubsystem extends SubsystemBase {
             case HOMING:
                 home();
                 break;
-        }
-
-        moveOuttake();
-    }
-
-    private void moveOuttake() {
-        if (elevatorInFrame() && !isAtHome()) {
-            outtake.closeOuttake();
-        } else {
-            outtake.setLeftOuttakeDoorPosition(leftOuttakeDoorPosition);
-            outtake.setRightOuttakeDoorPosition(rightOuttakeDoorPosition);
-        }
-    }
-
-    public void setOuttakePosition(@NonNull RobotSide side, double position) {
-        switch (side) {
-            case LEFT:
-                leftOuttakeDoorPosition = position;
-                break;
-            case RIGHT:
-                rightOuttakeDoorPosition = position;
-                break;
-            case BOTH:
-                leftOuttakeDoorPosition = position;
-                rightOuttakeDoorPosition = position;
         }
     }
 

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.launcher.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ledcontroller.LEDSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.mosaicfixers.MosaicFixerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.odometry.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.outtake.OuttakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.purplepixelplacer.PurplePixelPlacerSubsystem;
 
 public abstract class OpModeTemplate extends CommandOpMode {
@@ -40,6 +41,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 	protected PurplePixelPlacerSubsystem purplePixelPlacerSubsystem;
 	protected LauncherSubsystem launcherSubsystem;
 	protected OdometrySubsystem odometrySubsystem;
+	protected OuttakeSubsystem outtakeSubsystem;
 
 	protected GamepadEx driverGamepad, operatorGamepad;
 
@@ -82,6 +84,7 @@ public abstract class OpModeTemplate extends CommandOpMode {
 		purplePixelPlacerSubsystem = new PurplePixelPlacerSubsystem(this);
 		launcherSubsystem          = new LauncherSubsystem(this);
 		odometrySubsystem          = new OdometrySubsystem(this);
+		outtakeSubsystem           = new OuttakeSubsystem(this);
 
 		initializeGamepads();
 
@@ -94,7 +97,8 @@ public abstract class OpModeTemplate extends CommandOpMode {
 				ledSubsystem,
 				purplePixelPlacerSubsystem,
 				launcherSubsystem,
-				odometrySubsystem
+				odometrySubsystem,
+				outtakeSubsystem
 		);
 
 		schedule(new RunCommand(this::terminateOnOverCurrent));
@@ -107,20 +111,6 @@ public abstract class OpModeTemplate extends CommandOpMode {
 	protected final void initializeGamepads() {
 		operatorGamepad = new GamepadEx(gamepad2);
 		driverGamepad   = new GamepadEx(gamepad1);
-	}
-
-	/**
-	 * Toggles between endgame and teleop modes.
-	 */
-	protected final void toggleGamePeriod() {
-		switch (gamePeriod) {
-			case TELEOP:
-				gamePeriod = GamePeriod.ENDGAME;
-				break;
-			case ENDGAME:
-				gamePeriod = GamePeriod.TELEOP;
-				break;
-		}
 	}
 
 	/**
